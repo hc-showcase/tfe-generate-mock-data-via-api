@@ -27,7 +27,7 @@ pe_id=$(curl \
   --header "Content-Type: application/vnd.api+json" \
   https://app.terraform.io/api/v2/plans/plan-SGEULeVsj4JboynN | jq -r .data.relationships.exports.data[].id)
 
-if [ $pe_id == "null" ]; then
+if [ "$pe_id" == "" ]; then
 
 # Request a plan export
 cat << EOF > payload_for_request_plan_export.json
@@ -73,6 +73,7 @@ for ((i=1;i<=100;i++)); do
 done
 
 fi
+
 # Download the mock data
 curl \
   --header "Authorization: Bearer $TOKEN" \
@@ -81,9 +82,14 @@ curl \
   https://app.terraform.io/api/v2/plan-exports/$pe_id/download \
   > export.tar.gz
 
+# Clean up
+curl \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/vnd.api+json" \
+  -X DELETE \
+  https://app.terraform.io/api/v2/plan-exports/$pe_id
+
 rm -f payload_for_request_plan_export.json
 
-
-
-# Export...
+# Do something with the export...
 #...
