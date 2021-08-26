@@ -19,13 +19,13 @@ terraform plan
 last_plan_id=$(curl \
   --header "Authorization: Bearer $TOKEN" \
   --header "Content-Type: application/vnd.api+json" \
-  https://app.terraform.io/api/v2/workspaces/$1/runs | jq -r 'first(.data[].relationships.plan.data.id)')
+  https://app.terraform.io/api/v2/workspaces/$WORKSPACE/runs | jq -r 'first(.data[].relationships.plan.data.id)')
 
 # Check if a plan export already exists
 pe_id=$(curl \
   --header "Authorization: Bearer $TOKEN" \
   --header "Content-Type: application/vnd.api+json" \
-  https://app.terraform.io/api/v2/plans/plan-SGEULeVsj4JboynN | jq -r .data.relationships.exports.data[].id)
+  https://app.terraform.io/api/v2/plans/$last_plan_id | jq -r .data.relationships.exports.data[].id)
 
 if [ "$pe_id" == "" ]; then
 
